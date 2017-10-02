@@ -1,0 +1,225 @@
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	font-family: "Bowlby One", sans-serif;
+}
+
+body {
+	width: 100vw;
+	height: 100vh;
+	background-color: #5F41B7;
+	background-image: url('imgs/pattern.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#main {
+	margin: auto;
+	max-width: 554px;
+}
+
+#alias {
+	margin: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+#main h1 {
+	max-width: 554px;
+	color: white;
+	font-size: 144px;
+	line-height: 169px;
+	font-family: 'Roboto';
+	font-weight: bold;
+	text-align: center;
+	text-shadow: 0 4px 4px rgba(0, 0, 0, .25);
+}
+
+#main p {
+	max-width: 554px;
+	font-weight: bold;
+	text-align: left;
+	font-family: 'Roboto';
+	color: white;
+	margin-bottom: 40px;
+	font-size: 27px;
+	line-height: 32px;
+}
+
+#mayc {
+	font-size: 24px;
+	line-height: 28px;
+	margin-top: 30px;
+	margin-bottom: 0;
+}
+
+#donate {
+	position: absolute;
+	padding-right: 5px;
+	box-sizing: border-box;
+	right: 20px;
+	bottom: 20px;
+	background-color: rgba(241, 196, 15, 0.8);
+	border-radius: 100px;
+	font-family: 'Roboto';
+	font-weight: bold;
+	font-size: 24px;
+	line-height: 50px;
+	text-align: center;
+	width: 142px;
+	height: 50px;
+	color: rgba(0, 0, 0, 0.5);
+}
+
+#donate:hover {
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+}
+
+#main form {
+	max-width: 554px;
+	display: flex;
+	margin-bottom: 27px;
+	justify-content: space-between;
+	position: relative;
+}
+
+#main input {
+	Font-Family: 'Roboto';
+	Font-weight: Bold;
+	Font-Size: 24px;
+	Line-Height: 28px;
+	text-Align: Center;
+	cursor: text;
+}
+
+#main input::placeholder {
+	color: rgba(0, 0, 0, 0.4);
+}
+
+#main input:nth-child(odd) {
+	padding: 0 0 0 10px;
+	/*padding-left: 10px;*/
+	box-sizing: border-box;
+	text-align: left;
+	color: rgba(0, 0, 0, 0.6);
+	width: 370px;
+	height: 50px;
+	background-color: rgba(196, 196, 196, 0.3);
+}
+
+#main input:nth-child(odd):focus {
+	padding: 0 0 0 8px;
+	border: 2px solid rgba(95, 65, 183, 1);
+}
+
+#main input:nth-child(even) {
+	color: white;
+	width: 142px;
+	height: 50px;
+	background-color: rgba(46, 204, 113, 0.8);
+	cursor: pointer;
+}
+
+#main input:nth-child(even):hover {
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+}
+
+.invalid {
+	background-color: #e74c3c !important;
+	cursor: not-allowed !important;
+}
+
+#back {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	font-size: 64px;
+	line-height: 75px;
+	text-shadow: 2px 5px 0 #5534B7;
+	font-family: 'Roboto';
+	font-weight: bold;
+	cursor: pointer;
+	color: white;
+}
+
+#qr {
+	width: 350px;
+	height: 350px;
+	mix-blend-mode: lighten;
+}
+
+#alias h1 {
+	font-family: 'Roboto';
+	font-weight: bold;
+	font-size: 64px;
+	line-height: 75px;
+	height: 75px;
+	text-align: center;
+	color: #FFF;
+	text-shadow: 0 4px 4px rgba(0, 0, 0, 0.5);
+	margin-top: 53px;
+}
+
+#alias p {
+	font-family: 'Roboto';
+	font-weight: bold;
+	font-size: 48px;
+	line-height: 56px;
+	height: 56px;
+	text-align: center;
+	color: #3F2E71;
+}
+
+#copy {
+	cursor: pointer;
+	margin-top: 5px;
+	font-family: 'Roboto';
+	font-weight: bold;
+	font-size: 48px;
+	line-height: 56px;
+	height: 56px;
+	text-align: center;
+	color: white;
+}
+
+#copy.active {
+	cursor: default;
+	color: #2ecc71;
+	text-shadow: 0 0 10px #2ecc71;
+}
+
+@font-face {
+	font-family: 'icomoon';
+	src: url('fonts/icomoon.eot?nhn5ma');
+	src: url('fonts/icomoon.eot?nhn5ma#iefix') format('embedded-opentype'), url('fonts/icomoon.ttf?nhn5ma') format('truetype'), url('fonts/icomoon.woff?nhn5ma') format('woff'), url('fonts/icomoon.svg?nhn5ma#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+	/* use !important to prevent issues with browser extensions that change fonts */
+	font-family: 'icomoon' !important;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-brand:before {
+	content: "\e900";
+}

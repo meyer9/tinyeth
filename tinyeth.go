@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"html/template"
 	"io"
 	"log"
 	"math"
@@ -18,31 +19,38 @@ const letterBytes = "abcdefghijklmnopqrstuvwxyz"
 // TinyEth - represents TinyEth logic
 type TinyEth struct {
 	database *sql.DB
+	static   http.Handler
 }
 
-func (t *TinyEth) serveURL(w http.ResponseWriter, r *http.Request) {
-	urlCode := r.URL.Path[1:]
-	if unicode.IsUpper(rune(urlCode[0])) {
-		rows, _ := t.database.Query("SELECT address FROM RegistrationAliases WHERE url=?", urlCode)
-		if rows.Next() {
-			var address string
-			rows.Scan(&address)
-			io.WriteString(w, address)
-		} else {
-			w.WriteHeader(404)
-			io.WriteString(w, "Could not find url.")
-		}
-	} else {
-		rows, _ := t.database.Query("SELECT address FROM Registrations WHERE url=?", convertMnemonicToID(urlCode))
-		if rows.Next() {
-			var address string
-			rows.Scan(&address)
-			io.WriteString(w, address)
-		} else {
-			w.WriteHeader(404)
-			io.WriteString(w, "Could not find url.")
-		}
+func (t *TinyEth) resolveAlias(urlCode string) string {
+	rows, _ := t.database.Query("SELECT address FROM RegistrationAliases WHERE url=?", urlCode)
+	if rows.Next() {
+		var address string
+		rows.Scan(&address)
+		return address
 	}
+	return ""
+}
+
+func (t *TinyEth) resolveRandom(urlCode string) string {
+	rows, _ := t.database.Query("SELECT address FROM Registrations WHERE url=?", convertMnemonicToID(urlCode))
+	if rows.Next() {
+		var address string
+		rows.Scan(&address)
+		return address
+	}
+	return ""
+}
+
+func (t *TinyEth) getAddress(urlCode string) string {
+	if unicode.IsUpper(rune(urlCode[0])) {
+		return t.resolveAlias(urlCode)
+	}
+	address := t.resolveRandom(urlCode)
+	if address == "" {
+		address = t.resolveAlias(urlCode)
+	}
+	return address
 }
 
 func convertIDToMnemonic(i int) string {
@@ -104,30 +112,29 @@ func (t *TinyEth) registerURL(w http.ResponseWriter, r *http.Request) {
 		}
 		io.WriteString(w, convertIDToMnemonic(int(id)))
 	} else {
-		// alias registrations will start with an uppercase letter
-		rows, err := t.database.Query("SELECT url FROM RegistrationAliases WHERE url=?", strings.ToLower(alias))
-		if rows.Next() {
-			io.WriteString(w, "This address has already been used.")
-			return
-		}
 
-		_, err = t.database.Exec("INSERT INTO RegistrationAliases (address, url) VALUES (?, ?)", address, strings.ToLower(alias))
-		if err != nil {
-			log.Fatal(err)
-		}
-		io.WriteString(w, string(unicode.ToUpper(rune(alias[0])))+alias[1:])
 	}
 }
 
-func (t *TinyEth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (t TinyEth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
-
+		http.FileServer(http.Dir("./static")).ServeHTTP(w, r)
 	} else if strings.HasPrefix(r.URL.Path, "/static") {
-	} else if r.URL.Path == "/register" && r.Method == "POST" {
+		t.static.ServeHTTP(w, r)
+	} else if r.URL.Path == "/api/register" && r.Method == "POST" {
 		t.registerURL(w, r)
 	} else {
-		t.serveURL(w, r)
+		address := t.getAddress(r.URL.Path[1:])
+		template, _ := template.ParseFiles("template/url.html")
+
+		if err := template.Execute(w, address); err != nil {
+			log.Fatal(err)
+		}
 	}
+}
+
+func initTinyEth(database *sql.DB) *TinyEth {
+	return &TinyEth{database: database, static: http.StripPrefix("/static", http.FileServer(http.Dir("static")))}
 }
 
 func main() {
@@ -139,7 +146,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tinyeth := &TinyEth{database: db}
+	tinyeth := initTinyEth(db)
 	http.Handle("/", tinyeth)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

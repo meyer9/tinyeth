@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/0.4.0/trianglify.min.js"></script>
+      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+      <script type="text/javascript" src="static/main.js"></script>
+      <link rel="stylesheet" type="text/css" href="static/style.css">
+
+      <meta name="author" content="Rho">
+      <meta charset="utf-8">
+
+  </head>
+
+  <body id='body'>
+    <div id='main'>
+      <h1>TinyETH</h1>
+      <p>Enter Long Ethereum Address to Make it Tiny</p>
+      <form action="result.html" id='GenerateForm' name='GenerateForm' onsubmit="return validateAddress()">
+        <input type='text' placeholder="Ethereum Address" name='address' autocomplete="off"></input><input type='submit' value="Generate" id='generate'></input>
+      </form>
+      <form action="result.html" id='CreateForm' name='CreateForm' onsubmit="return validateForm()">
+        <input type='text' name='alias' placeholder="Custom Alias (Optional)" autocomplete="off"></input><input type='submit' value="Create" id='create'></input>
+      </form>
+      <p id='mayc'>May contain letters, numbers, and dashes</p>
+      <a href='donate.html'><div id='donate'><span class='icon-brand'></span>Donate</div></a>
+    </div>
+  </body>
+</html>
