@@ -14,12 +14,12 @@
 
 <body>
 	<a href='index.html'>
-		<h1 id='back'>TinyETH / <span>Julian</span></h1>
+		<h1 id='back'>TinyETH / <span>{{.URL}}</span></h1>
 	</a>
 	<div id='alias'>
 		<img id='qr' src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=ethereum:{{.}}&margin=5">
-		<h1>Julian's ETH Address</h1>
-		<p id='code'>{{.}}</p>
+		<h1>ETH Address</h1>
+		<p id='code'>{{.Address}}</p>
 		<button onclick='copyToClipboard("#code")' id='copy' alt='Copied'>Copy</button>
 	</div>
 </body>
