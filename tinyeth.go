@@ -16,6 +16,38 @@ import (
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyz"
 
+func convertIDToMnemonic(i int) string {
+	var digits []int
+	for i > 0 {
+		remainder := i % 26
+		digits = append([]int{remainder}, digits...)
+		i = i / 26
+	}
+	var text string
+	for n := range digits {
+		b := letterBytes[digits[n]]
+		text = text + string(b)
+	}
+	return text
+}
+
+func convertMnemonicToID(s string) int {
+	i := 0
+	exponent := 0
+	for p := len(s) - 1; p >= 0; p-- {
+		q := strings.IndexByte(letterBytes, s[p])
+		i = i + int(math.Pow(float64(26), float64(exponent)))*q
+		exponent = exponent + 1
+	}
+	return i
+}
+
+type EntryInfo struct {
+	IsAlias bool
+	URL     string
+	Address string
+}
+
 // TinyEth - represents TinyEth logic
 type TinyEth struct {
 	database *sql.DB
@@ -42,41 +74,17 @@ func (t *TinyEth) resolveRandom(urlCode string) string {
 	return ""
 }
 
-func (t *TinyEth) getAddress(urlCode string) string {
+func (t *TinyEth) getAddress(urlCode string) *EntryInfo {
 	if unicode.IsUpper(rune(urlCode[0])) {
-		return t.resolveAlias(urlCode)
+		return &EntryInfo{IsAlias: true, URL: urlCode, Address: t.resolveAlias(urlCode)}
 	}
 	address := t.resolveRandom(urlCode)
+	isAlias := false
 	if address == "" {
 		address = t.resolveAlias(urlCode)
+		isAlias = true
 	}
-	return address
-}
-
-func convertIDToMnemonic(i int) string {
-	var digits []int
-	for i > 0 {
-		remainder := i % 26
-		digits = append([]int{remainder}, digits...)
-		i = i / 26
-	}
-	var text string
-	for n := range digits {
-		b := letterBytes[digits[n]]
-		text = text + string(b)
-	}
-	return text
-}
-
-func convertMnemonicToID(s string) int {
-	i := 0
-	exponent := 0
-	for p := len(s) - 1; p >= 0; p-- {
-		q := strings.IndexByte(letterBytes, s[p])
-		i = i + int(math.Pow(float64(26), float64(exponent)))*q
-		exponent = exponent + 1
-	}
-	return i
+	return &EntryInfo{IsAlias: isAlias, URL: urlCode, Address: address}
 }
 
 func (t *TinyEth) registerURL(w http.ResponseWriter, r *http.Request) {
