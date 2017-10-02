@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -65,7 +66,10 @@ func (t *TinyEth) resolveAlias(urlCode string) string {
 }
 
 func (t *TinyEth) resolveRandom(urlCode string) string {
-	rows, _ := t.database.Query("SELECT address FROM Registrations WHERE url=?", convertMnemonicToID(urlCode))
+	rows, err := t.database.Query("SELECT address FROM Registrations WHERE url=?", convertMnemonicToID(urlCode))
+	if err != nil {
+		log.Panic(err)
+	}
 	if rows.Next() {
 		var address string
 		rows.Scan(&address)
@@ -133,10 +137,14 @@ func (t TinyEth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		t.registerURL(w, r)
 	} else {
 		address := t.getAddress(r.URL.Path[1:])
-		template, _ := template.ParseFiles("template/url.html")
+		if address.Address == "" {
+			w.WriteHeader(404)
+		} else {
+			template, _ := template.ParseFiles("template/url.html")
 
-		if err := template.Execute(w, address); err != nil {
-			log.Fatal(err)
+			if err := template.Execute(w, address); err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }
@@ -156,5 +164,10 @@ func main() {
 	}
 	tinyeth := initTinyEth(db)
 	http.Handle("/", tinyeth)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	listenAddress := os.Getenv("LISTEN")
+	if listenAddress == "" {
+		listenAddress = ":8080"
+	}
+	fmt.Printf("Listening on port %s\n", listenAddress)
+	log.Fatal(http.ListenAndServe(listenAddress, nil))
 }
